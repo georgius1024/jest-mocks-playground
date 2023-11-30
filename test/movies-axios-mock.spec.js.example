@@ -1,0 +1,55 @@
+//eslint-disable-next-line
+const axios = require('axios/dist/node/axios.cjs')
+// eslint-disable-next-line
+import Movies from "../src/movies";
+
+describe("Movies", () => {
+  it("imports without error", () => {
+    expect(Movies).toBeDefined();
+    expect(typeof Movies).toBe("function");
+  });
+
+  it("can list movies", async () => {
+    const movies = new Movies();
+    axios.get = jest.fn().mockResolvedValue([1, 2, 3]);
+    const list = await movies.index();
+    expect(list).toEqual([1, 2, 3]);
+    expect(axios.get).toHaveBeenCalledWith("localhost:4000/movies", null);
+  });
+
+  it("can show movies item", async () => {
+    const movies = new Movies();
+    axios.get = jest.fn().mockResolvedValue({ name: "123" });
+    const item = await movies.show(123);
+    expect(item).toEqual({ name: "123" });
+    expect(axios.get).toHaveBeenCalledWith("localhost:4000/movies/123", null);
+  });
+
+  it("can create movies item", async () => {
+    const movies = new Movies();
+    axios.post = jest.fn().mockResolvedValue();
+    await movies.create({ text: "123" });
+    expect(axios.post).toHaveBeenCalledWith("localhost:4000/movies", {
+      text: "123"
+    });
+  });
+
+  it("can update movies item", async () => {
+    const movies = new Movies();
+    axios.put = jest.fn().mockResolvedValue();
+    await movies.update(123, { text: "123" });
+    expect(axios.put).toHaveBeenCalledWith("localhost:4000/movies/123", {
+      text: "123"
+    });
+  });
+
+  it("can destroy movies item", async () => {
+    const movies = new Movies();
+    axios["delete"] = jest.fn().mockResolvedValue();
+    await movies.destroy(123);
+    expect(axios["delete"]).toHaveBeenCalledWith(
+      "localhost:4000/movies/123",
+      null
+    );
+  });
+});
