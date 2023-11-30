@@ -4,22 +4,18 @@
  * @param x
  */
 export default function factorial(x) {
-  return new Promise((resolve, reject) => {
-    if (typeof x !== "number") {
-      return reject("X must be number");
-    }
-    if (x < 0 || x > 100) {
-      return reject("X must be in range of 0..100");
-    }
-    if (Math.ceil(x) !== x) {
-      return reject("X must be integer");
-    }
-    if (x === 0) {
-      resolve(1);
-    } else if (x === 1) {
-      resolve(1);
-    } else {
-      factorial(x - 1).then((int) => resolve(x * int));
-    }
-  });
+  if (typeof x !== 'number') {
+    throw new Error('X must be number');
+  }
+  if (x < 0 || x > 100) {
+    throw new Error('X must be in range of 0..100');
+  }
+  if (Math.ceil(x) !== x) {
+    throw new Error('X must be integer');
+  }
+  if (x === 0) {
+    return 1;
+  } else {
+    return x * factorial(x - 1);
+  }
 }
