@@ -1,0 +1,38 @@
+import factorial from '../src/factorial-async';
+
+describe("factorial", () => {
+  it("imported without error", () => {
+    expect(factorialAsync).toBeDefined();
+  });
+  it("is function", () => {
+    expect(typeof factorialAsync).toBe("function");
+  });
+  it("returns promise", () => {
+    expect(factorialAsync(0)).toHaveProperty("then");
+  });
+  it("factorial(0) is 1", async () => {
+    await expect(factorial(0)).resolves.toBe(1);
+  });
+  it("factorial(0) is 1", async () => {
+    await expect(factorial(1)).resolves.toBe(1);
+  });
+  it("factorial(8) is 40320", async () => {
+    await expect(factorial(8)).resolves.toBe(40320);
+  });
+  it("factorial(-1) throws an error (rejects)", async () => {
+    await expect(() => factorialAsync(-1)).rejects.toContain("range");
+  });
+  it("factorial(-1) throws an error (done callback)", (done) => {
+    factorialAsync(-1).catch((error) => {
+      expect(error).toContain("range");
+      done();
+    });
+  });
+  it("factorial(-1) throws an error (try catch)", async () => {
+    try {
+      await factorialAsync(-1);
+    } catch (error) {
+      expect(error).toContain("range");
+    }
+  });
+});
