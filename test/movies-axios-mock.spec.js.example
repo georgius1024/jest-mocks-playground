@@ -1,5 +1,5 @@
 //eslint-disable-next-line
-const axios = require('axios/dist/node/axios.cjs')
+const axios = require('axios')
 // eslint-disable-next-line
 import Movies from "../src/movies";
 

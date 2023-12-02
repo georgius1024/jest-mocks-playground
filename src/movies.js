@@ -1,4 +1,4 @@
-const axios = require('axios/dist/node/axios.cjs')
+const axios = require('axios')
 
 export default function Movies() {
   this.url = function(id = null) {

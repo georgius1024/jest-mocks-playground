@@ -1,4 +1,4 @@
-import axios from 'axios/dist/node/axios.cjs'
+import axios from 'axios'
 import Movies from '../src/movies'
 jest.mock('axios')
 

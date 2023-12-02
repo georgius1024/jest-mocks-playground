@@ -1,4 +1,4 @@
-const axios = require('axios/dist/node/axios.cjs')
+const axios = require('axios')
 
 export default function Customer(name, address) {
   this.data = {name, address, _id: null}

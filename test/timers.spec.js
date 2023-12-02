@@ -12,7 +12,7 @@ describe('timers', () => {
   it('can stop at any time', () => {
     let counter = 0
     setInterval(() => counter ++, 100)
-    jest.runTimersToTime(1000)
+    jest.advanceTimersByTime(1000)
     expect(counter).toBe(10)
   })
 
