@@ -7,7 +7,7 @@ function Controller(flow = [], timerInterval = 100) {
     this.currentNode = node
     bus.emit('node', node)
     if (node.type === 'delay') {
-      this.delay = node.value
+      this.delay = +node.value
     } else {
       delete this.delay
     }

@@ -30,9 +30,9 @@ const flow = [
     type: 'exit'
   }
 ]
-xdescribe('Controller', () => {
-  beforeAll(() => {
-    jest.useFakeTimers()
+describe('Controller', () => {
+  beforeEach(() => {
+    jest.useFakeTimers({ legacyFakeTimers: false })
   })
   it('imports without error', () => {
     expect(Controller).toBeDefined()
@@ -102,7 +102,7 @@ xdescribe('Controller', () => {
   })
 
   const delay = (ms) => {
-    return new Promise(resolve => setTimeout(resolve, ms))
+    return new Promise((resolve) => setTimeout(resolve, ms))
   }
 
   it('Makes pause on delay nodes (real time)', async () => {
@@ -124,37 +124,52 @@ xdescribe('Controller', () => {
   it('Makes pause on delay nodes (fake time)', async () => {
     const controller = new Controller(flow)
     const terminated = jest.fn()
+    controller.on('terminated', terminated)
     controller.on('tick', () => {
       const now = new Date().valueOf()
-      jest.setSystemTime(new Date(now + 100))
+      controller.lastTick = now
     })
     controller.run()
     jest.advanceTimersByTime(100)
     expect(controller.currentNode).toHaveProperty('type', 'message')
-    // await delay(100)
-    // expect(controller.currentNode).toHaveProperty('type', 'delay')
-    // await delay(500)
-    // expect(controller.currentNode).toHaveProperty('type', 'exit')
-    // await delay(100)
-    // expect(terminated).toBeCalledTimes(1)
+    jest.advanceTimersByTime(100)
+    expect(controller.currentNode).toHaveProperty('type', 'delay')
+    jest.advanceTimersByTime(500)
+    expect(controller.currentNode).toHaveProperty('type', 'exit')
+    jest.advanceTimersByTime(100)
+    expect(terminated).toBeCalledTimes(1)
   })
 
   it('can make pause', () => {
-    jest.useRealTimers()
     const controller = new Controller(flow)
     const terminated = jest.fn()
+    const paused = jest.fn()
     controller.on('terminated', terminated)
-
+    controller.on('paused', paused)
+    controller.on('tick', () => {
+      const now = new Date().valueOf()
+      controller.lastTick = now
+    })
     controller.run()
     jest.advanceTimersByTime(200)
     expect(controller.currentNode).toHaveProperty('type', 'delay')
+    expect(controller.delay).toEqual(500)
+    jest.advanceTimersByTime(200)
+    expect(controller.delay).toEqual(300)
     controller.pause()
-
     expect(controller.paused()).toBe(true)
-    //expect(controller.delay).toBe(400)
-
+    jest.advanceTimersByTime(2000)
+    expect(controller.delay).toEqual(300)
+    controller.run()
+    expect(controller.paused()).toBe(false)
+    jest.advanceTimersByTime(100)
+    expect(controller.delay).toEqual(200)
+    jest.advanceTimersByTime(200)
+    expect(controller.delay).not.toBeDefined()
+    jest.runAllTimers()
+    expect(terminated).toBeCalledTimes(1)
   })
-  afterAll(() => {
+  afterEach(() => {
     jest.useRealTimers()
   })
 })
