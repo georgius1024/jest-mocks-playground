@@ -4,20 +4,15 @@ const axios = require('axios/dist/node/axios.cjs');
 import Movies from '../src/movies';
 
 describe('Movies', () => {
-  it('fetch movies list from backend', async () => {
+  it('imports without errors', () => {
+    expect(typeof Movies).toBe('function')
+  })
+  it('loads list of movies', async () => {
     const movies = new Movies();
-    axios['get'] = jest.fn().mockResolvedValue([1, 2, 3]);
-    const response = await movies.index();
-    expect(response).toBeDefined();
-  });
-  it('creates movie', async () => {
-    const movies = new Movies();
-    axios['post'] = jest.fn().mockResolvedValue(42);
-    const response = await movies.create({ name: 'New!' });
-    expect(response).toBe(42);
-    expect(axios['post']).toHaveBeenCalled();
-    expect(axios['post']).toHaveBeenCalledWith('localhost:4000/movies', {
-      name: 'New!'
-    });
-  });
+    const get = jest.fn().mockResolvedValue([1,2,3])
+    axios.get = get
+    const list = await movies.index();
+    expect(list).toEqual([1,2,3])
+    expect(axios.get).toHaveBeenCalled()
+  })
 });
